@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" 
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>Chief</string>
+    <key>OnDemand</key>
+    <false/>
+    <key>Program</key>
+    <string>Chief</string>
+    <key>WorkingDirectory</key>
+    <string>/AgentBox/chief/service</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>chief</string>
+        <string>-p</string>
+        <string>2010</string>
+    </array>
+    <key>StandardErrorPath</key>
+    <string>/AgentBox/var/Chief-stderr.log</string>
+    <key>StandardOutPath</key>
+    <string>/AgentBox/var/Chief-stdout.log</string>
+</dict>
+</plist>
+

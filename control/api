@@ -1,0 +1,26 @@
+#!/usr/local/bin/nush
+
+(set whoami (NSString stringWithShellCommand:"whoami"))
+(unless (eq whoami "root")
+        (puts "api must be run as root.")
+        (exit -1))
+
+;; configuration
+(load "components/config")
+(load "components/database")
+
+;; subsystems
+(load "components/launchd")
+(load "components/sandbox")
+(load "components/nginx")
+
+;; application logic
+(load "components/agentbox")
+
+;; page handlers
+(load "components/macros")
+(load "components/api")
+
+(files "/*path:" "../public")
+
+(RadHTTPServer run)

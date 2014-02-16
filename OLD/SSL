@@ -1,0 +1,25 @@
+Xmachine SSL configuration is essential nginx SSL configuration.
+
+
+http://www.digicert.com/ssl-certificate-installation-nginx.htm
+
+The files are currently in deus/etc. 
+
+I think they should be moved to /nginx and possibly stored in the database or some other configuration location
+
+
+# create private key, secure with password "1234"
+openssl genrsa -des3 -out xmachinenet.key 2048
+
+# create certificate signing request for rapidssl
+openssl req -new -key xmachinenet.key -out xmachinenet.csr
+
+# strip password from private key
+mv xmachinenet.key xmachinenet.key.original
+openssl rsa -in xmachinenet.key.original -out xmachinenet.key
+
+
+// append the certificates
+// https://support.comodo.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticleid=1182
+cat renaissance_io.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt UTNAddTrustSGCCA.crt AddTrustExternalCARoot.crt > all.crt
+

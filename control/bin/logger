@@ -1,0 +1,61 @@
+#!/usr/local/bin/nush
+#
+# logger
+#  - processes nginx logfile into mongodb database
+#
+(load "RadKit")
+(set mongo (RadMongoDB new))
+(mongo connect)
+
+(set task ((NSTask alloc) init))
+(task setLaunchPath:"/usr/bin/tail")
+(task setArguments:(array "-n" "2000" "-F" "/Users/agentbox/var/nginx-access.log"))
+(task setStandardOutput:(set outputPipe (NSPipe pipe)))
+(set outputFile (outputPipe fileHandleForReading))
+
+(task launch)
+
+(set fields '(msec: time_local: host: request: status: bytes_sent: request_time: remote_addr: http_referer: http_user_agent:))
+
+(set log (mongo findOne:(dict query:(dict) orderby:(dict msec:-1)) inCollection:"nginx.log"))
+(set latest-msec (log msec:))
+;(puts (+ "most recent log entry " latest-msec))
+
+(set partial "")
+(while (set d (outputFile availableData))
+       (if (d length)
+           (then (set s (NSString stringWithData:d encoding:NSUTF8StringEncoding))
+                 (set scanner (NSScanner scannerWithString:(+ partial s)))
+                 (set count 0)
+                 (until (scanner isAtEnd)
+                        (scanner scanUpToString:"|||" intoString:(set pstring (NuReference new)))
+                        (set line (pstring value))
+                        (if line
+                            (set endIsHere (scanner scanString:"|||" intoString:nil))
+                            (if endIsHere
+                                (else (set partial line) (break))
+                                (then (set partial "")
+                                      (set parts (line componentsSeparatedByString:"|"))
+                                      (set log (dict))
+                                      (fields eachWithIndex:
+                                              (do (field i)
+                                                  (log (field labelName) (parts i))))
+                                      ;; save record
+                                      (log msec:((log msec:) doubleValue))
+                                      (if (or (null? latest-msec) (> (log msec:) latest-msec))
+                                          (set count (+ count 1))
+                                          ;; fix types
+                                          (log time_local:(NSDate dateWithNaturalLanguageString:(log time_local:)))
+                                          (log status:((log status:) intValue))
+                                          (log bytes_sent:((log bytes_sent:) intValue))
+                                          (log request_time:((log request_time:) doubleValue))
+                                          (set requestParts ((log request:) componentsSeparatedByString:" "))
+                                          (log request_method:(requestParts 0))
+                                          (log request_path:(requestParts 1))
+                                          (log request_version:(requestParts 2))
+                                          (log removeObjectForKey:"request")
+                                          (mongo insertObject:log intoCollection:"nginx.log")
+                                          )))))
+                 ;(if count (NSLog (+ "logger: added " count " records")))
+                 )
+           (else (sleep 1))))

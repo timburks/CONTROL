@@ -1,0 +1,3 @@
+
+# to run an app in a sandbox
+sandbox-exec -f /Users/tim/Desktop/Repositories/Xmachine/sandbox/sample.sb nunjad -s sample -v

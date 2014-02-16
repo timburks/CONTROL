@@ -1,0 +1,128 @@
+#!/usr/local/bin/nush
+#
+# AgentIO SETUP script.
+#
+# Must be run as root.
+#
+# Prerequisites:
+#
+# 0. xmachine
+#    Create a user named "xmachine". It does not need to own /Xmachine. 
+#
+# 1. Nu
+#    Install from http://github.com/timburks/nu
+#
+# 2. RadKit
+#
+# 3. mongodb
+#    Install binary distribution into /usr/local/mongodb.
+#
+# 4. nginx
+#    Build from source
+#    % ./configure --with-http_ssl_module
+#    % make
+#    % sudo make install
+#    This should install nginx in /usr/local/nginx.
+#    NOTE: on Mac OS 10.8 it may be necessary to statically link pcre.
+#
+# 5. deus (the X Machine Monitor)
+#    Review and edit the settings in deus/tools/setup.nu.
+#
+(unless (eq (NSString stringWithShellCommand:"whoami") "root")
+        (NSLog "SETUP must be run as root.")
+        (exit))
+
+(NSLog "Preparing X Machine.")
+(set XMACHINE-PATH "/Xmachine")
+(unless (eq (NSString stringWithShellCommand:"pwd") XMACHINE-PATH)
+        (NSLog "Error! X Machine SETUP must be run from #{XMACHINE-PATH}.")
+        (exit -1))
+
+(NSLog "Checking file paths.")
+(set DEUS-PATH "#{XMACHINE-PATH}/deus/deus")
+(unless ((NSFileManager defaultManager) fileExistsAtPath:DEUS-PATH)
+        (NSLog "Error! deus must be installed at #{DEUS-PATH}")
+        (exit -1))
+
+(set NGINX-PATH "/usr/local/nginx/sbin/nginx")
+(unless ((NSFileManager defaultManager) fileExistsAtPath:NGINX-PATH)
+        (NSLog "Error! nginx must be installed at #{NGINX-PATH}")
+        (exit -1))
+
+(set MONGOD-PATH "/usr/local/mongodb/bin/mongod")
+(unless ((NSFileManager defaultManager) fileExistsAtPath:MONGOD-PATH)
+        (NSLog "Error! mongod must be installed at #{MONGOD-PATH}")
+        (exit -1))
+
+(NSLog "Making supporting directories.")
+(system "mkdir -p mongodb/data/db")
+(system "mkdir -p nginx/logs")
+(system "mkdir -p var")
+(system "mkdir -p workers")
+
+(function launchd-install (file plist)
+          (set path (+ "/Library/LaunchDaemons/" file))
+          (if ((NSFileManager defaultManager) fileExistsAtPath:path)
+              (system "launchctl unload #{path}"))
+          ((plist XMLPropertyListRepresentation)
+           writeToFile:path
+           atomically:NO)
+          (system "launchctl load #{path}"))
+
+(NSLog "Launching mongodb.")
+(launchd-install "net.xmachine.mongod.plist"
+                 (dict Label:"mongod"
+                    OnDemand:NO
+            WorkingDirectory:"#{XMACHINE-PATH}/mongodb/data"
+            ProgramArguments:(array "/usr/local/mongodb/bin/mongod"
+                                    "--dbpath"
+                                    "#{XMACHINE-PATH}/mongodb/data/db")
+          HardResourceLimits:(dict NumberOfFiles:1024)
+          SoftResourceLimits:(dict NumberOfFiles:1024)
+           StandardErrorPath:"#{XMACHINE-PATH}/var/mongod-stderr.log"
+             StandardOutPath:"#{XMACHINE-PATH}/var/mongod-stdout.log"))
+
+(NSLog "Configuring deus monitor for this domain.")
+(if (system "cd deus; nush tools/setup.nu")
+    (exit -1))
+
+(NSLog "Launching deus monitor.")
+(launchd-install "net.xmachine.deus.plist"
+                 (dict Label:"deus"
+                    OnDemand:NO
+            WorkingDirectory:"#{XMACHINE-PATH}/deus"
+            ProgramArguments:(array "#{XMACHINE-PATH}/deus/deus"
+                                    "-p"
+                                    "2010")
+           StandardErrorPath:"#{XMACHINE-PATH}/var/deus-stderr.log"
+             StandardOutPath:"#{XMACHINE-PATH}/var/deus-stdout.log"))
+
+(if NO ;; we're not ready for this
+    (NSLog "Launching deus api.")
+    (launchd-install "net.xmachine.api.plist"
+                     (dict Label:"api"
+                        OnDemand:NO
+                WorkingDirectory:"#{XMACHINE-PATH}/deus"
+                ProgramArguments:(array "#{XMACHINE-PATH}/deus/api"
+                                        "-p"
+                                        "2013")
+               StandardErrorPath:"#{XMACHINE-PATH}/var/api-stderr.log"
+                 StandardOutPath:"#{XMACHINE-PATH}/var/api-stdout.log")))
+
+(NSLog "Launching nginx.")
+(launchd-install "net.xmachine.nginx.plist"
+                 (dict Label:"nginx"
+                    OnDemand:NO
+                   KeepAlive:YES
+              LaunchOnlyOnce:YES
+            WorkingDirectory:"#{XMACHINE-PATH}/nginx"
+            ProgramArguments:(array "/usr/local/nginx/sbin/nginx"
+                                    "-c"
+                                    "nginx.conf"
+                                    "-p"
+                                    "#{XMACHINE-PATH}/nginx/")
+           StandardErrorPath:"#{XMACHINE-PATH}/var/nginx-stderr.log"
+             StandardOutPath:"#{XMACHINE-PATH}/var/nginx-stdout.log"))
+
+(NSLog "Your X Machine is ready.")
+

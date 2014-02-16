@@ -1,0 +1,42 @@
+
+Agent I/O CONTROL
+
+A portable container for networked applications.
+
+On Linux (Ubuntu), CONTROL must be installed at /home/control.
+This is performed automatically by the Ubuntu.sh setup script.
+
+
+Installation:
+
+0) Prepare a bare Linux installation. I like using 512MB 
+   "Ubuntu 13.10 x64" images on Digital Ocean. If you
+   use Digital Ocean, be sure to specify an SSH key
+   when you create your instance and set your DNS
+   records appropriately.
+
+1) Download the Ubuntu.sh script to your instance.
+
+> on your instance
+% wget https://raw2.github.com/timburks/CONTROL/master/Ubuntu.sh
+
+2) Run the Ubuntu.sh script to download and build all components
+and start the CONTROL daemon.
+
+> on your instance
+% Ubuntu.sh
+
+3) Copy your SSL certs onto your instance and restart it.
+
+> remotely
+% scp wildcard_agent_io.* root@hello.agent.io:/home/control/control/etc
+
+> on your instance 
+% /usr/sbin/nginx
+
+4) Use the remote.nu script to set an admin username and password.
+
+> remotely
+% nush remote.nu
+
+

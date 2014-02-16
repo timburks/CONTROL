@@ -1,0 +1,21 @@
+
+Background on Sandboxing
+
+http://iphonedevwiki.net/index.php/Seatbelt
+http://www.usefulsecurity.com/
+http://developer.apple.com/mac/library/documentation/Darwin/Reference/ManPages/man7/sandbox.7.html
+
+
+Creating zip files
+
+% zip -r Sample.zip Sample.app
+  adding: Sample.app/ (stored 0%)
+  adding: Sample.app/public/ (stored 0%)
+  adding: Sample.app/public/favicon.ico (deflated 37%)
+  adding: Sample.app/public/hi.html (deflated 23%)
+  adding: Sample.app/Sample (deflated 82%)
+  adding: Sample.app/site.nu (deflated 71%)
+
+Increasing process limits
+% sysctl kern.maxproc
+% sudo sysctl -w kern.maxproc=2000

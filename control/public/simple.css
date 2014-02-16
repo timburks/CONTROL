@@ -1,0 +1,58 @@
+* {padding:0; margin:0;}
+
+body         {width:800px; margin:0 auto; background:#fff; color:#000;}
+body         {font-size:12pt; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;}
+
+#fullpage    {width:800px; margin-left:0em; min-height:10em;}
+#main        {width:620px; margin-left:0em; padding-right:5px; float:left; min-height:10em;}
+#sidebar     {width:150px; padding:1em; float:left; background:#eee; min-height:10em;}
+#header {
+	margin:0 auto 10px auto; 
+	padding:0.0em 0; 
+	border-bottom:0.4em solid #ccc; 
+	clear:both;
+}
+#footer      {width:100%; margin:2em auto 0 auto; padding:0.5em 0; border-top:0.2em solid #ccc; clear:both;}
+
+#nav {width:100%; margin:0 auto 0.5em auto;}
+#nav ul {list-style:none;}
+#nav ul li {font-size:1.4em; float:left;}
+#nav ul li a, 
+#nav ul li a:visited {display:block; padding:0.2em 0.5em 0.2em 0.5em;}
+#nav ul li a:hover {background:#ccc; text-decoration:none;}
+
+#nav:after, 
+#content:after {display:block; height:0; content:""; visibility:hidden; clear:both;}
+
+#main {margin-top:0em;}
+
+a         {color:#000; text-decoration:none; font-weight:bold;}
+a:visited {color:#000; text-decoration:none; font-weight:bold;}
+a:hover   {color:#000; text-decoration:underline; font-weight:bold;}
+a img     {border:none;}
+
+h1, h2, h3, h4 {font-weight:bold; }
+
+h1 {font-size:140%;}
+h2 {font-size:130%;}
+h3 {font-size:120%;}
+h4 {font-size:110%;}
+
+h1 a         {text-decoration:none; font-weight:bold;}
+h1 a:visited {text-decoration:none; font-weight:bold;}
+h1 a:hover   {text-decoration:underline; font-weight:bold;}
+
+li {list-style-position:inside; margin-bottom:0.2em;}
+
+#sidebar {font-size:60%;}
+
+form table {margin-top:1em; font-size:100%;}
+form table tr td {min-width:5em;}
+
+p {margin-top:0.5em; margin-bottom:0.5em; font-size:100%;}
+
+th {text-align:left;}
+td {padding-left:0.5em; padding-right:0.5em;}
+
+pre.code {background-color:#F8F8F8; border-top:thick solid #ccc; border-bottom:thick solid #ccc; font-size:80%; padding:1em; margin-top:1em;}
+

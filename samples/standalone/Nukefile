@@ -1,0 +1,30 @@
+(set appname "standalone")
+(set deus "http://agent.io")
+(set credentials "admin:password123")
+
+(task "zip" is
+      (SH "mkdir -p build/#{appname}.app")
+      (SH "cp -r #{appname} build/#{appname}.app/#{appname}")
+      (SH "cp -r public build/#{appname}.app")
+      (SH "cd build; zip -r #{appname}.zip #{appname}.app"))
+
+(task "pub" => "zip" is
+      (set command (+ "curl -s " deus "/control/api/"
+                      appname
+                      " -T build/#{appname}.zip"
+                      " -X POST"
+                      " -u " credentials))
+      (puts command)
+      (set version (NSString stringWithShellCommand:command))
+      (puts "app version: #{version}")
+      (set command (+ "curl -s " deus "/control/api/"
+                      appname
+                      "/deploy/"
+                      version
+                      " -X POST"
+                      " -u " credentials))
+      (set result (NSString stringWithShellCommand:command))
+      (puts "deployment result: #{result}"))
+
+(task "default" => "zip")
+

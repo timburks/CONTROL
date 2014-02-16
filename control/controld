@@ -1,0 +1,29 @@
+#!/usr/local/bin/nush
+
+(set whoami (NSString stringWithShellCommand:"whoami"))
+(unless (eq whoami "root")
+        (puts "controld must be run as root.")
+        (exit -1))
+
+;; configuration
+(load "components/config")
+(load "components/database")
+
+;; subsystems
+(load "components/upstart")
+(load "components/launchd")
+(load "components/sandbox")
+(load "components/nginx")
+
+;; application logic
+(load "components/agentbox")
+
+;; page handlers
+(load "components/xhtml")
+(load "components/macros")
+(load "components/pages")
+(load "components/signin")
+
+(files "/control/*path:" "public")
+
+(RadHTTPServer run)

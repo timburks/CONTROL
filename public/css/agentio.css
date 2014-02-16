@@ -1,0 +1,47 @@
+
+
+body { 
+	background: white; 
+	font-family: 'Avenir', 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; 
+	font-weight: normal; 
+	font-style: normal; 
+	font-size: 14px; 
+	line-height: 1; 
+	color: #000; 
+	position: relative;
+	 -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { 
+	font-family: 'Avenir', 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; 
+	font-weight: bold; 
+	font-style: normal; 
+	color: #000; 
+	text-rendering: optimizeLegibility; 
+	line-height: 1.1; 
+	margin-bottom: 14px; 
+	margin-top: 14px; 
+}
+
+th {
+	text-align:left;
+	}
+
+#navbar {
+ 	border-bottom:5px solid #FFC;
+}
+
+#content {
+	margin-top:0px; border-top:5px solid #F00;
+}
+
+pre .description {
+	font-family: 'Avenir', 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;	
+}
+
+a {
+   font-weight: bold;
+}
+
+
+

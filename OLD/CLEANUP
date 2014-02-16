@@ -1,0 +1,26 @@
+#!/usr/local/bin/nush
+#
+# X Machine CLEANUP script.
+#
+# Must be run as root.
+#
+(unless (eq (NSString stringWithShellCommand:"whoami") "root")
+        (NSLog "CLEANUP must be run as root.")
+        (exit))
+
+(set files ((NSString stringWithShellCommand:"ls /Library/LaunchDaemons/net.xmachine.*") lines))
+(files each:
+       (do (file)
+           (set command "launchctl unload #{file}")
+           (system command)
+           (system "rm -f #{file}")))
+
+(system "rm -rf mongodb")
+(system "rm -rf nginx")
+(system "rm -rf var")
+(system "rm -rf public/deus.html")
+(system "rm -rf public/index.html")
+(system "rm -rf sample/build")
+(system "rm -rf workers")
+
+(NSLog "Your X Machine is deleted.")

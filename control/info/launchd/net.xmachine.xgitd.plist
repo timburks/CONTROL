@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" 
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>Xgit</string>
+    <key>OnDemand</key>
+    <false/>
+    <key>Program</key>
+    <string>Xgit</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/git/Xgit</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>Xgit</string>
+        <string>-p</string>
+        <string>2012</string>
+    </array>
+    <key>UserName</key>
+    <string>git</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/git/Xgit/stderr.log</string>
+    <key>StandardOutPath</key>
+    <string>/Users/git/Xgit/stdout.log</string>
+</dict>
+</plist>
+
